@@ -3,8 +3,8 @@ import { useState } from "react"
 
 function App() {
   const [currentCard, setcurrentCard] = useState('')
+  const [deck, setdeck] = useState(['Cat card', 'Shuffle card', 'Defuse card', 'Exploding kitten card'])
   const cardElements = []
-  const cards = ['Cat card', 'Shuffle card', 'Defuse card', 'Exploding kitten card']
   for (let index = 0; index < 5; index++) {
     cardElements.push(
       <Card
@@ -14,7 +14,7 @@ function App() {
 
   const handleClick = () =>{
     const rand = Math.floor(Math.random() * 4)
-    const card = cards[rand]
+    const card = deck[rand]
     setcurrentCard(card)
   }
   

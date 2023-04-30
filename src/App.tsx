@@ -5,7 +5,7 @@ import LeaderBoard from "./pages/LeaderBoard";
 function App() {
   
   return (
-    <div className="bg-[#020611] py-10">
+    <div className="bg-[#020611] pt-10">
       <Router>
         <Routes>
           <Route index element={<Main/>}></Route>

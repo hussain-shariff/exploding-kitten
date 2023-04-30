@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { MyObject, initialStateType } from "../types";
+import { initialStateType } from "../types";
 import Cards from "../Cards";
+import { notify } from "../components/Toast";
 
 const initialState : initialStateType = {
     isStart : true,
@@ -24,9 +25,51 @@ const gameSlicer = createSlice({
                 temp.push(card)
             }
             state.deck = temp
+        },
+        drawCard(state){
+            const temp = [...state.deck]
+            const card = temp.pop()
+            if(card?.cardName === 'Defuse card'){
+                state.defuseCardCount++
+            }
+            state.currentCard = card
+            state.deck = temp
+        },
+        handleNext(state, actions){
+            if(state.deck.length === 0){
+                notify('Hurray you won 🚀!')
+                state.isStart = true
+            }
+            else if(state.currentCard?.cardName === 'Cat Card'){
+                notify('card removed')
+                state.currentCard = null
+            }
+            else if(state.currentCard?.cardName === 'Deffuse Card'){
+                state.defuseCardCount++
+                state.currentCard = null
+            }
+            else if(state.currentCard?.cardName === 'Shuffle Card'){
+                state.defuseCardCount = 0
+                notify('Game is restarting')
+                actions.payload.shuffleCards()
+                state.currentCard = null
+            }
+            else if(state.currentCard?.cardName === 'Exploding Kitten Card'){
+                if(state.defuseCardCount === 0){
+                    state.defuseCardCount = 0
+                    notify('You lost!')
+                    state.currentCard = null
+                    state.isStart = true
+                }
+                else{
+                    state.defuseCardCount--
+                    notify('Deffuse card saved you. 🚀')
+                    state.currentCard = null
+                }
+            }
         }
     }
 })
 
 export default gameSlicer;
-export const cartActions = gameSlicer.actions;
+export const gameActions = gameSlicer.actions;

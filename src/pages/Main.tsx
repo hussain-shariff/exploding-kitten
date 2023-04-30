@@ -2,20 +2,27 @@ import { ChevronRight } from 'lucide-react';
 import { notify } from '../components/Toast';
 import { useState } from 'react';
 import Card from '../components/Card';
-import Cards from '../Cards';
 import { ToastContainer } from 'react-toastify';
 import {Link} from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux';
+import { initialStateType } from "../types";
+import { gameActions } from '../store/gameSlicer';
 
-    type MyObject = {
-        cardName : string,
-        id : number
-    }
+
+type MyObject = {
+    cardName : string,
+    id : number
+}
+
+type gameStateType = {
+    gameState : initialStateType
+}
 
 const Main = () => {
-    const [isStart, setisStart] = useState(true)
-    const [currentCard, setcurrentCard] = useState<MyObject | null>()
-    const [defuseCardCount, setdefuseCardCount] = useState(0)
-    const [deck, setdeck] = useState <MyObject[]>([])
+    const dispatch = useDispatch()
+    const gameState = useSelector((state : gameStateType) => state.gameState)
+    const { isStart, currentCard, defuseCardCount, deck } = gameState
+
     const cardElements = deck.map((card, index)=> (
         <Card
         key = {index}
@@ -24,28 +31,12 @@ const Main = () => {
     ))
 
     const handleClick = () =>{
-        const temp = [...deck]
-        const card = temp.pop()
-        if(card?.cardName === 'Defuse card'){
-        setdefuseCardCount(pre=> pre+1)
-        }
-        setcurrentCard(card)
-        setdeck(temp)
-    }
-
-    const shuffleCards = ()=>{
-        const temp = []
-        for (let index = 0; index < 5; index++) {
-        const rand = Math.floor(Math.random() * 4)
-        const card = Cards[rand]
-        temp.push(card)
-        }
-        setdeck(temp)
+        dispatch(gameActions.drawCard())
     }
 
     const handleStart = () =>{
-        shuffleCards()
-        setisStart(false)
+        dispatch(gameActions.toggleStart())
+        dispatch(gameActions.shuffleCards())
     }
     
     const handleNext = () =>{
